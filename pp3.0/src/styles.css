@@ -1,0 +1,70 @@
+/* Estilo geral da NavBar */
+.navbar {
+    background-color: #333; /* Fundo escuro */
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px; /* Espaçamento nas laterais */
+}
+
+/* Logo Mestre Padeiro */
+.navbar-logo {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-logo img {
+    height: 50px; /* Ajusta a altura da logo */
+    margin-right: 20px; /* Espaço entre a logo e os botões */
+}
+
+/* Botões de Entrar e Registrar-se */
+.navbar-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-buttons button {
+    background-color: white;
+    border: 1px solid #999;
+    color: black;
+    padding: 10px 25px; /* Aumenta o tamanho dos botões */
+    border-radius: 8px;
+    margin-left: 20px; /* Espaço entre os botões */
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.navbar-buttons button:first-child {
+    margin-left: 0; /* Remove margem do primeiro botão */
+}
+
+.navbar-buttons button:hover {
+    background-color: #f0f0f0; /* Efeito hover */
+}
+
+/* Ícones de redes sociais */
+.social-icons {
+    display: flex;
+    align-items: center;
+}
+
+.social-icons a {
+    margin-left: 10px;
+    background-color: #000;
+    border-radius: 5px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.social-icons a img {
+    height: 25px; /* Ajusta o tamanho dos ícones */
+    width: 25px;
+}
+
+.social-icons a:first-child {
+    margin-left: 0; /* Remove margem do primeiro ícone */
+}

@@ -1,0 +1,79 @@
+/* Navbar.css */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333; /* Cor de fundo escura */
+    padding: 10px 20px;
+    position: relative;
+    height: 187px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+}
+
+.navbar-logo img {
+    height: 275px;  /* Ajuste o tamanho da logo conforme necessário */
+    margin-left: 150px; 
+    
+}
+
+.navbar-buttons-social {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Alinha à direita */
+    
+}
+
+.navbar-buttons {
+    display: flex;
+    gap: 10px; /* Espaço entre os botões */  
+     
+
+    
+}
+
+.navbar-buttons .btn {
+    background-color: #f0f0f0; /* Cor de fundo dos botões */
+    border: 1px solid #333;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+    
+}
+
+.navbar-buttons .btn:hover {
+    background-color: #ddd; /* Efeito hover nos botões */
+    
+}
+
+/* Estilo para os ícones sociais */
+.navbar-social {
+    display: flex;
+    gap: 23px;
+    margin-top: 10px; /* Espaço entre os botões e os ícones */
+    margin-right: 225px;
+    
+}
+
+.navbar-social a {
+    color: white;
+    font-size: 24px;
+    text-decoration: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+}
+
+.navbar-social a:hover {
+    color: #ccc; /* Efeito hover nos ícones */
+}
+
+.navbar-social i {
+    background-color: #000;    
+    padding: 10px;
+    border-radius: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
