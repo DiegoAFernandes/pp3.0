@@ -32,18 +32,19 @@
 }
 
 .navbar-buttons .btn {
-    background-color: #f0f0f0; /* Cor de fundo dos botões */
-    border: 1px solid #333;
+    background-color: #000000; /* Cor de fundo dos botões */
+    border: 1px solid #000000;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+    color:#ffffff
     
 }
 
 .navbar-buttons .btn:hover {
-    background-color: #ddd; /* Efeito hover nos botões */
+    background-color: #111111; /* Efeito hover nos botões */
     
 }
 

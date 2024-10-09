@@ -16,8 +16,8 @@ const Navbar = () => {
 
     return (
         <nav className="navbar">
-            <div className="navbar-logo">
-                <img src={logo} alt="Mestre Padeiro" />
+            <div className="navbar-logo">                
+                <img src={logo} alt="Mestre Padeiro" />                                            
             </div>
             <div className="container">
                 <div className="navbar-buttons">
@@ -28,6 +28,7 @@ const Navbar = () => {
                     <a href="https://pt-br.facebook.com"><i className="fab fa-facebook"></i></a>
                     <a href="https://www.whatsapp.com"><i className="fab fa-whatsapp"></i></a>
                     <a href="https://www.instagram.com"><i className="fab fa-instagram"></i></a>
+                    
                 </div>
             </div>
         </nav>
