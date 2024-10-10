@@ -1,23 +1,27 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Importando useNavigate
+import { useNavigate } from 'react-router-dom'; 
 import './Navbar.css';
 import logo from '../MPL.png';
 
 const Navbar = () => {
-    const navigate = useNavigate(); // Inicializando useNavigate
+    const navigate = useNavigate();
 
     const handleLogin = () => {
-        navigate('/login'); // Redirecionando para a página de login
+        navigate('/login');
     };
 
     const handleRegister = () => {
-        navigate('/cadastro'); // Redirecionando para a página de cadastro
+        navigate('/cadastro');
     };
+
+    const handleHomePage = () => {
+        navigate('/');
+    }
 
     return (
         <nav className="navbar">
             <div className="navbar-logo">                
-                <img src={logo} alt="Mestre Padeiro" />                                            
+                <img src={logo} onClick={handleHomePage} alt="Mestre Padeiro" style={{ cursor: 'pointer' }}/>                                                          
             </div>
             <div className="container">
                 <div className="navbar-buttons">

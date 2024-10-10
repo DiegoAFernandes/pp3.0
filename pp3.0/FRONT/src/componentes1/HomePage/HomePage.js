@@ -1,10 +1,13 @@
-import React from 'react';
+import React from "react";
+import "../HomePage/HomePage.css";
 
 const HomePage = () => {
     return (
-        <div>
-            <h1>Bem-vindo à Página Inicial!</h1>
-            <p>Esta é a sua página inicial personalizada.</p>
+        <div className="container1">
+            <link href="https://fonts.googleapis.com/css2?family=Bakery+Goods&display=swap" rel="stylesheet"></link>
+           <h1>Bem-Vindo à Padaria</h1>
+           <h1>MESTRE PADEIRO!</h1>
+
         </div>
     );
 };
