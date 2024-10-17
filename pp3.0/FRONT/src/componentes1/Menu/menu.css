@@ -1,0 +1,160 @@
+body {
+    background-color: #ddab5a;
+    
+}
+
+.menu-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    justify-content: space-between;
+    justify-content: space-around;
+}
+
+.menu-box {
+    background-color: #0f0f0f; /* Fundo preto */
+    color: white;
+    width: 700px;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+    text-align: center;    
+    height: fit-content;
+}
+
+.menu-box h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.menu-columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.menu-column {
+    flex: 1;
+}
+
+.menu-section {
+    margin-bottom: 20px;
+}
+
+.menu-section h3 {
+    background-color: #da9337; /* Cor amarela */
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+.menu-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+}
+
+.menu-section ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.quantity-controls {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-controls button {
+    background-color: #da9337; /* Cor dos botões */
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.quantity-controls button:hover {
+    background-color: #b8792a;
+}
+
+.quantity-controls input {
+    width: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 0 5px;
+}
+.quantity-controls {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.quantity-controls button {
+    background-color: #da9337; /* Cor dos botões */
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.quantity-controls button:hover {
+    background-color: #b8792a;
+}
+
+.menu-section ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.teste{
+    font-size: larger;
+    padding-bottom: 10px;
+    
+}
+.return{
+    background-color: #ad1717;
+    color: white;
+    border-color: #0f0f0f00;
+    border-radius: 6px;
+    font-size: large;
+    font-family:  Calibri, sans-serif;
+    width: 40%;
+    height: 34px;
+}
+.return:hover{
+    background-color: #911414;
+    cursor: pointer;
+}
+.continue{
+    background-color: #42E277;
+    color: white;
+    border-color: #0f0f0f00;
+    border-radius: 6px;
+    font-size: large;
+    font-family:  Calibri, sans-serif;
+    width: 40%;
+    height: 34px
+}
+.continue:hover{
+    background-color: #3ac468;
+    cursor: pointer;
+}
+

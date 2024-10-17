@@ -49,7 +49,7 @@ const SignInPage = () => {
                         />
                     </div>
                     
-                    <div>
+                    <div className="space">
                         <label>Senha:</label>
                         <input 
                             type="password" 
@@ -58,7 +58,7 @@ const SignInPage = () => {
                             required 
                         />
                     </div>
-                    <button type="submit">Submit</button>
+                    <button type="submit">Continuar</button>
                 </form>
             </div>
         </div>

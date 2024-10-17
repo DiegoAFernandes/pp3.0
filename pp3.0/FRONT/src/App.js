@@ -5,6 +5,8 @@ import Navbar from "./componentes1/NavBar/Navbar";
 import SignUpPage from "./componentes1/Registrar/registrar";
 import HomePage from "./componentes1/HomePage/HomePage";
 import SignInPage from "./componentes1/Login/Login";
+import Menu from "./componentes1/Menu/menu";
+import Pagamento from "./componentes1/Pagamento/Pagamento";
 
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
             {/* Rota pro cadastro */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<SignInPage />} />{" "}
+            <Route path="/menu" element={<Menu />} />{" "}
+            <Route path="/payment" element={<Pagamento />} />{" "}
           </Routes>
         </div>
       </div>

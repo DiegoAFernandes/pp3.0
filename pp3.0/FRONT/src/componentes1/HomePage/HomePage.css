@@ -1,9 +1,36 @@
-.container1{
-    background-color: #DDAB5A;
-    align-items: center;  
-    justify-content: center;
-    height: 100vh; 
+.container1 {
+  background-color: #ddab5a;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: "Trebuchet MS", sans-serif;
+  padding-top: 3%;
+  padding-bottom: 1%;
+};
+.menu-container {
+  max-width: 400px;
+  width: 100%;
+  padding: 20px;
+  background-color: #0f0f0f;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+ 
+};
+.menu-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ffffff;
     
-    
+};
+
+.info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3%;
+};
+.FORM{
+    display: flex;
+    justify-content: left;
     
 };
