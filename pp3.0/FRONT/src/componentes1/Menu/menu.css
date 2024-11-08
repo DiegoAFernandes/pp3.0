@@ -17,7 +17,7 @@ body {
 .menu-box {
     background-color: #0f0f0f; /* Fundo preto */
     color: white;
-    width: 700px;
+    width: 40%;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);

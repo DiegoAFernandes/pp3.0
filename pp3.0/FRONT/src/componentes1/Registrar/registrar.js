@@ -7,14 +7,16 @@ const SignUpPage = () => {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
+    // Validação da senha
     const validatePassword = (password) => {
+        // A senha precisa ter pelo menos 8 caracteres e 1 caractere especial
         const regex = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-        const digits = password.replace(/[^0-9]/g, ''); // Remove não dígitos
-        const isValidLength = digits.length >= 8; // Verifica se há pelo menos 8 dígitos
-        return regex.test(password) && isValidLength;
+        return regex.test(password);
     };
 
+    // Validação do telefone
     const validatePhoneNumber = (phoneNumber) => {
         const regex = /^(?:\(\d{2}\)\s)?(?:\d{5}-\d{4}|\d{4}-\d{4}|\d{8,9})$/;
         const digits = phoneNumber.replace(/\D/g, '');
@@ -23,7 +25,8 @@ const SignUpPage = () => {
         return regex.test(phoneNumber) && isValidLength;
     };
 
-    const handleSubmit = (e) => {
+    // Função de envio do formulário
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         // Validação do telefone
@@ -38,10 +41,35 @@ const SignUpPage = () => {
             return; // Impede o envio do formulário
         }
 
-        console.log('Nome:', firstName, lastName);
-        console.log('Email:', email);
-        console.log('Telefone:', phone);
-        console.log('Senha:', password);
+        // Dados do usuário para envio
+        const userData = { username: firstName + ' ' + lastName, password, email, phone };
+
+        try {
+            // Envia os dados para o backend
+            const response = await fetch('http://localhost:5000/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (response.ok) {
+                alert('Usuário registrado com sucesso!');
+                // Redirecionar ou limpar os campos após o sucesso
+                setFirstName('');
+                setLastName('');
+                setEmail('');
+                setPhone('');
+                setPassword('');
+            } else {
+                const errorMessage = await response.text();
+                setError(errorMessage);
+            }
+        } catch (err) {
+            setError('Erro ao registrar usuário.');
+            console.error(err);
+        }
     };
 
     return (
@@ -95,7 +123,8 @@ const SignUpPage = () => {
                             required 
                         />
                     </div>
-                    <button type="submit">Submit</button>
+                    {error && <p style={{ color: 'red' }}>{error}</p>} {/* Exibe mensagem de erro */}
+                    <button type="submit">Registrar</button>
                 </form>
             </div>
         </div>

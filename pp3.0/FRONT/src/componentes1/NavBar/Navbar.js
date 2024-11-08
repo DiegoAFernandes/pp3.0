@@ -23,6 +23,9 @@ const Navbar = () => {
             <div className="navbar-logo">                
                 <img src={logo} onClick={handleHomePage} alt="Mestre Padeiro" style={{ cursor: 'pointer' }}/>                                                          
             </div>
+            <div>
+                <h1 className='ntitle'>Mestre Padeiro</h1>
+            </div>
             <div className="container">
                 <div className="navbar-buttons">
                     <button className="btn btn-login" onClick={handleLogin}>Entrar</button>

@@ -4,8 +4,8 @@ import './Login.css';
 const SignInPage = () => {
     
     const [email, setEmail] = useState('');
-    
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     const validatePassword = (password) => {
         const regex = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
@@ -14,12 +14,8 @@ const SignInPage = () => {
         return regex.test(password) && isValidLength;
     };
 
-    
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-       
 
         // Validação da senha
         if (!validatePassword(password)) {
@@ -27,9 +23,32 @@ const SignInPage = () => {
             return; // Impede o envio do formulário
         }
 
+        // Dados para enviar ao backend
+        const userData = { email, password };
+
+        try {
+            // Envia os dados para o backend
+            const response = await fetch('http://localhost:5000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData),
+            });
+
+            if (response.ok) {
+                alert('Login bem-sucedido!');
+                // Redirecionar ou tratar o login com sucesso
+            } else {
+                const errorMessage = await response.text();
+                setError(errorMessage);
+            }
+        } catch (err) {
+            setError('Erro ao tentar fazer login.');
+            console.error(err);
+        }
         
         console.log('Email:', email);
-        
         console.log('Senha:', password);
     };
 
@@ -58,6 +77,9 @@ const SignInPage = () => {
                             required 
                         />
                     </div>
+
+                    {error && <p style={{ color: 'red' }}>{error}</p>} {/* Exibe mensagem de erro */}
+
                     <button type="submit">Continuar</button>
                 </form>
             </div>
