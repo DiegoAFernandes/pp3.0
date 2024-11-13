@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './registrar.css';
 
+
 const SignUpPage = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -46,7 +47,7 @@ const SignUpPage = () => {
 
         try {
             // Envia os dados para o backend
-            const response = await fetch('http://localhost:5000/register', {
+            const response = await fetch('http://localhost:8000/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,6 +63,7 @@ const SignUpPage = () => {
                 setEmail('');
                 setPhone('');
                 setPassword('');
+                
             } else {
                 const errorMessage = await response.text();
                 setError(errorMessage);
