@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import './Login.css';
+import { useNavigate } from 'react-router-dom';
 
 const SignInPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   // Função de validação de senha
   const validatePassword = (password) => {
     const regex = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     return regex.test(password);
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -20,7 +22,7 @@ const SignInPage = () => {
 
     // Validação da senha
     if (!validatePassword(password)) {
-      alert("A senha deve ter pelo menos 8 caracteres e incluir pelo menos um caractere especial.");
+      setError('A senha deve ter pelo menos 8 caracteres e incluir um caractere especial!');
       return;
     }
   
@@ -38,17 +40,21 @@ const SignInPage = () => {
   
       if (response.ok) {
         const result = await response.json(); // Espera JSON do backend
+        console.log('Resposta do servidor:', result);
         alert(result.message); // Exibe a mensagem de sucesso
+        
+        // Armazena o usuário no localStorage após o login
+        localStorage.setItem('user', JSON.stringify(result.user));
+        navigate('/'); // Navega para a página inicial após o login
+
       } else {
-        const errorMessage = await response.text(); // Espera JSON de erro do backend
+        const errorMessage = await response.json(); // Espera JSON de erro do backend
         setError(errorMessage.message || 'Erro ao fazer login');
       }
     } catch (err) {
-      setError('Erro ao tentar fazer login.');
+      setError('Erro ao tentar fazer login. Tente novamente mais tarde.');
       console.error(err);
     }
-    console.log('Email:', email);
-    console.log('Senha:', password);
   };
   
   return (

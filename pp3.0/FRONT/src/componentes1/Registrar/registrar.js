@@ -43,11 +43,11 @@ const SignUpPage = () => {
         }
 
         // Dados do usuário para envio
-        const userData = { username: firstName + ' ' + lastName, password, email, phone };
+        const userData = { firstName, lastName, password, email, phone };
 
         try {
-            // Envia os dados para o backend
-            const response = await fetch('http://localhost:8000/register', {
+                // Envia os dados para o backend
+                const response = await fetch('http://localhost:8000/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
