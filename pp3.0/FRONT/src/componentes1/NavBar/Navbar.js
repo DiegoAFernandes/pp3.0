@@ -8,52 +8,69 @@ const Navbar = () => {
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
 
-    // Efeito para recuperar os dados do usuário do localStorage
-    useEffect(() => {
+    // Função para verificar o usuário logado no localStorage
+    const checkLoggedUser = () => {
         const loggedUser = localStorage.getItem('user');
         if (loggedUser) {
             try {
                 const parsedUser = JSON.parse(loggedUser);
-                setUser(parsedUser);  // Atualiza o estado do usuário com o que está no localStorage
-                console.log('Usuário logado:', parsedUser);
+                console.log('Usuário no localStorage:', parsedUser); // Verifique a estrutura do usuário
+                setUser(parsedUser); // Atualiza o estado com o usuário do localStorage
             } catch (error) {
                 console.error("Erro ao analisar o JSON: ", error);
-                setUser(null);  // Se houver erro no parse, limpa o estado
+                setUser(null); // Se houver erro no parse, limpa o estado
             }
+        } else {
+            setUser(null); // Se não houver usuário logado, limpa o estado
         }
+    };
+
+    // Verifica o usuário e adiciona listener para mudanças no localStorage
+    useEffect(() => {
+        checkLoggedUser();
+
+        const handleStorageChange = () => {
+            checkLoggedUser();
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+
+        // Remove o listener ao desmontar o componente
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
     }, []);
 
     // Função de login
     const handleLogin = () => {
-        // Verifica se já existe um usuário logado
         if (user) {
             setError('Você já está logado. Faça logout para entrar com outro usuário.');
         } else {
-            navigate('/login');
+            navigate('/login'); // Redireciona para a página de login
         }
     };
 
     // Função de registro
     const handleRegister = () => {
-        // Verifica se já existe um usuário logado
         if (user) {
             setError('Você já está logado. Faça logout para registrar outro usuário.');
         } else {
-            navigate('/cadastro');
+            navigate('/cadastro'); // Redireciona para a página de registro
         }
     };
 
     // Função para redirecionar para a página inicial
     const handleHomePage = () => {
-        navigate('/');
+        navigate('/'); // Redireciona para a página inicial
     };
 
     // Função de logout
     const handleLogout = () => {
-        localStorage.removeItem('user');  // Remove o usuário do localStorage
-        setUser(null);  // Limpa o estado de usuário
-        setError('');  // Limpa a mensagem de erro
-        navigate('/');  // Redireciona para a página inicial após logout
+        localStorage.removeItem('user'); // Remove o usuário do localStorage
+        window.dispatchEvent(new Event('storage')); // Notifica os listeners do localStorage
+        setUser(null); // Limpa o estado de usuário
+        setError(''); // Limpa a mensagem de erro
+        navigate('/'); // Redireciona para a página inicial após logout
         console.log('Usuário deslogado');
     };
 
@@ -74,7 +91,10 @@ const Navbar = () => {
                 <div className="navbar-buttons">
                     {user ? (
                         <div className="user-info">
-                            <span>Bem-vindo, {user.firstName}!</span>
+                            {/* Exibe o nome do usuário com encadeamento opcional */}
+                            <span className='userTitle'>
+                                Bem-vindo, {user.Username}! ‎ ‎ ‎   
+                            </span>
                             <button className="btn btn-logout" onClick={handleLogout}>
                                 Sair
                             </button>

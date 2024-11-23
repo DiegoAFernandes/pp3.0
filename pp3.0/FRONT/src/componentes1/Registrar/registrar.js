@@ -84,7 +84,7 @@ const SignUpPage = () => {
                         <input 
                             type="text" 
                             value={firstName} 
-                            onChange={(e) => setFirstName(e.target.value)} 
+                            onChange={(e) => setFirstName(e.target.value) } 
                             required 
                         />
                     </div>

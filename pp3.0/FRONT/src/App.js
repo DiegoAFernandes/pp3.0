@@ -21,7 +21,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<SignInPage />} />{" "}
             <Route path="/menu" element={<Menu />} />{" "}
-            <Route path="/payment" element={<Pagamento />} />{" "}
+            <Route path="/Pagamento" element={<Pagamento />} />{" "}
           </Routes>
         </div>
       </div>

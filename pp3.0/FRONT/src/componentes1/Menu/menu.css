@@ -15,15 +15,18 @@ body {
 }
 
 .menu-box {
-    background-color: #0f0f0f; /* Fundo preto */
+    background-color: #0f0f0f;
     color: white;
     width: 40%;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
-    text-align: center;    
+    text-align: center;
     height: fit-content;
+    margin-top: 0; /* Remove qualquer margem superior */
+    align-self: flex-start; /* Alinha ao topo se estiver em um contêiner flex */
 }
+
 
 .menu-box h2 {
     margin-bottom: 20px;
@@ -64,7 +67,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+    list-style-type: none;
     margin: 5px 0;
     padding: 10px;
     border-radius: 5px;
@@ -123,12 +126,17 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-.teste{
-    font-size: larger;
-    padding-bottom: 10px;
     
 }
+.teste { 
+    font-size: larger;
+    padding-bottom: 10px;
+    align-self: flex-start;  
+    margin-top: 0;  
+    padding-top: 0;  
+    list-style-type: none;
+}
+
 .return{
     background-color: #ad1717;
     color: white;

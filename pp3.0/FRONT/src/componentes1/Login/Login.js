@@ -6,6 +6,7 @@ const SignInPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // Estado de carregamento
   const navigate = useNavigate();
 
   // Função de validação de senha
@@ -17,12 +18,13 @@ const SignInPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Limpar mensagens de erro antes de cada nova tentativa de login
     setError('');
+    setLoading(true); // Inicia o carregamento
 
     // Validação da senha
     if (!validatePassword(password)) {
       setError('A senha deve ter pelo menos 8 caracteres e incluir um caractere especial!');
+      setLoading(false); // Desativa o carregamento se houver erro
       return;
     }
   
@@ -39,20 +41,33 @@ const SignInPage = () => {
       });
   
       if (response.ok) {
-        const result = await response.json(); // Espera JSON do backend
+        const result = await response.json();
         console.log('Resposta do servidor:', result);
-        alert(result.message); // Exibe a mensagem de sucesso
+        alert(result.message); 
         
-        // Armazena o usuário no localStorage após o login
-        localStorage.setItem('user', JSON.stringify(result.user));
-        navigate('/'); // Navega para a página inicial após o login
+        // Corrige o nome para exibir com espaço entre o primeiro e o último nome
+        const userWithFullName = {
+          ...result.user,
+          fullName: `${result.user.firstName} ${result.user.lastName}`, // Concatenando nome completo
+        };
+        
+        // Salva o usuário com nome completo no localStorage
+        localStorage.setItem('user', JSON.stringify(userWithFullName));
+
+        setTimeout(() => {
+          setLoading(false);
+          window.dispatchEvent(new Event('storage')); 
+          navigate('/'); 
+        }, 500); 
 
       } else {
-        const errorMessage = await response.json(); // Espera JSON de erro do backend
+        const errorMessage = await response.json();
         setError(errorMessage.message || 'Erro ao fazer login');
+        setLoading(false);
       }
     } catch (err) {
       setError('Erro ao tentar fazer login. Tente novamente mais tarde.');
+      setLoading(false);
       console.error(err);
     }
   };
@@ -84,7 +99,11 @@ const SignInPage = () => {
 
           {error && <p style={{ color: 'red' }}>{error}</p>} {/* Exibe mensagem de erro */}
 
-          <button type="submit">Continuar</button>
+          {loading ? (
+            <p style={{ color: 'white' }}>Carregando...</p> 
+          ) : (
+            <button type="submit">Continuar</button>
+          )}
         </form>
       </div>
     </div>
