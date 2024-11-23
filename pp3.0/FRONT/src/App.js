@@ -7,6 +7,7 @@ import HomePage from "./componentes1/HomePage/HomePage";
 import SignInPage from "./componentes1/Login/Login";
 import Menu from "./componentes1/Menu/menu";
 import Pagamento from "./componentes1/Pagamento/Pagamento";
+import TypePayment from "./componentes1/typePayment/typePayment";
 
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
             <Route path="/login" element={<SignInPage />} />{" "}
             <Route path="/menu" element={<Menu />} />{" "}
             <Route path="/Pagamento" element={<Pagamento />} />{" "}
+            <Route path="/typePayment" element={<TypePayment />} />{" "}
           </Routes>
         </div>
       </div>

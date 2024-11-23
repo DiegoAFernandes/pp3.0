@@ -71,7 +71,7 @@ const Menu = () => {
         navigate('/');
     };
     const handlePagamento = () => {
-        navigate('/Pagamento')
+        navigate('/typePayment')
     };
 
     
