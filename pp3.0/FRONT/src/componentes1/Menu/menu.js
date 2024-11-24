@@ -71,9 +71,18 @@ const Menu = () => {
         navigate('/');
     };
     const handlePagamento = () => {
-        navigate('/typePayment')
+        if (totalPrice === 0) {
+            alert("Você precisa adicionar itens ao carrinho antes de prosseguir.");
+            return;
+        }
+        const cartItems = Object.keys(cart).map(itemName => ({
+            name: itemName,
+            quantity: cart[itemName],
+            price: menuItems.find(item => item.name === itemName).price
+        }));
+        navigate('/typePayment', { state: { totalPrice, cartItems} });
     };
-
+    
     
 
     return (

@@ -8,6 +8,7 @@ import SignInPage from "./componentes1/Login/Login";
 import Menu from "./componentes1/Menu/menu";
 import Pagamento from "./componentes1/Pagamento/Pagamento";
 import TypePayment from "./componentes1/typePayment/typePayment";
+import NotaPagamento from "./componentes1/notaPagamento/notaPagamento";
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
             <Route path="/menu" element={<Menu />} />{" "}
             <Route path="/Pagamento" element={<Pagamento />} />{" "}
             <Route path="/typePayment" element={<TypePayment />} />{" "}
+            <Route path="/notaPagamento" element={<NotaPagamento />} />
           </Routes>
         </div>
       </div>

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./typePayment.css";
 
 const TypePayment = () => {
     const [paymentMethod, setPaymentMethod] = useState('');
     const [observations, setObservations] = useState('');
+    const [deliveryOption, setDeliveryOption] = useState('');
+    const [address, setAddress] = useState('');
     const [cardNumber, setCardNumber] = useState('');
     const [cardName, setCardName] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
@@ -15,6 +17,7 @@ const TypePayment = () => {
 
     const handlePaymentSelection = (method) => {
         setPaymentMethod(method);
+        setError('');
     };
 
     const validateCardDetails = () => {
@@ -38,6 +41,18 @@ const TypePayment = () => {
         return true;
     };
 
+    const buttons = document.querySelectorAll('.payment-options button');
+
+        buttons.forEach(button => {
+        button.addEventListener('click', function () {
+        // Remove a classe .selected de todos os botões
+        buttons.forEach(btn => btn.classList.remove('selected'));
+
+        // Adiciona a classe .selected ao botão clicado
+        this.classList.add('selected');
+        });
+    });
+
     const handleSubmit = () => {
         if (!paymentMethod) {
             alert("Selecione um método de pagamento.");
@@ -48,8 +63,20 @@ const TypePayment = () => {
             return;
         }
 
+        if (!deliveryOption) {
+            alert("Selecione uma opção de entrega ou retirada.");
+            return;
+        }
+
+        if (deliveryOption === "Entregar" && !address) {
+            alert("Por favor, insira o endereço para entrega.");
+            return;
+        }
+
         const paymentDetails = {
             method: paymentMethod,
+            deliveryOption,
+            address: deliveryOption === "Entregar" ? address : null,
             observations,
             cardDetails:
                 paymentMethod === "Cartão"
@@ -57,11 +84,27 @@ const TypePayment = () => {
                     : null,
         };
 
+        const totalPrice = location.state?.totalPrice || 0; 
+        const cartItens = location.state?.cartItens || [];
+        console.log(cartItens);
+
+        // Armazenar os dados no sessionStorage
+        sessionStorage.setItem("paymentDetails", JSON.stringify(paymentDetails));
+        sessionStorage.setItem("totalPrice", totalPrice);
+        sessionStorage.setItem("cartItens", cartItens);
+
         console.log("Detalhes do pagamento:", paymentDetails);
         alert("Pedido finalizado com sucesso!");
+
+        navigate('/notaPagamento', { state: { totalPrice, paymentDetails, cartItens } });
     };
 
-    const qrCodeExample = "https://via.placeholder.com/200"; // Substitua pelo QR Code gerado.
+    const qrCodeExample = "https://via.placeholder.com/200";
+    const location = useLocation();
+    const totalPrice = location.state?.totalPrice || 0;
+    const cartItens = location.state?.cartItens || [];
+    
+
 
     return (
         <div className="payment-selection-container">
@@ -77,10 +120,10 @@ const TypePayment = () => {
                     Boleto Bancário
                 </button>
                 <button onClick={() => handlePaymentSelection("Dinheiro")}>
-                    Dinheiro (Pagar na Entrega)
+                    Dinheiro
                 </button>
             </div>
-            
+
             {paymentMethod === "Cartão" && (
                 <div className="card-payment">
                     <h3>Pagamento com Cartão</h3>
@@ -134,11 +177,7 @@ const TypePayment = () => {
                     <div className="pix-code">
                         <input type="text" value="EXEMPLO1234567890" readOnly />
                     </div>
-                    <img
-                        src={qrCodeExample}
-                        alt="QR Code para pagamento"
-                        className="qr-code"
-                    />
+                    <img src={qrCodeExample} alt="QR Code para pagamento" className="qr-code" />
                     <p>Válido até 15 minutos após a solicitação</p>
                 </div>
             )}
@@ -150,13 +189,43 @@ const TypePayment = () => {
                     <div className="boleto-code">
                         <input type="text" value="0019 0009 9876 5432 1111 0000 0123 4567" readOnly />
                     </div>
-                    <img
-                        src="https://via.placeholder.com/600x200" // Substitua com a imagem real do boleto gerado
-                        alt="Boleto Bancário"
-                    />
+                    <img src="https://via.placeholder.com/600x200" alt="Boleto Bancário" />
                     <p>Válido até 15 minutos após a solicitação</p>
                 </div>
             )}
+
+            <div className="cash-options">
+                <h3></h3>
+                <p>Selecione uma opção:</p>
+                <div>
+                    <button
+                        onClick={() => setDeliveryOption("Entregar")}
+                        className={deliveryOption === "Entregar" ? "selected" : ""}
+                    >
+                        Entregar
+                    </button>
+                    <button
+                        onClick={() => setDeliveryOption("Retirar")}
+                        className={deliveryOption === "Retirar" ? "selected" : ""}
+                    >
+                        Retirar
+                    </button>
+                </div>
+
+                {deliveryOption === "Entregar" && (
+                    <div className="address-input">
+                        <label htmlFor="address">Endereço:</label>
+                        <input
+                            id="address"
+                            type="text"
+                            value={address}
+                            onChange={(e) => setAddress(e.target.value)}
+                            placeholder="Digite seu endereço"
+                            required
+                        />
+                    </div>
+                )}
+            </div>
 
             <div className="observations">
                 <label>Observações do Pedido:</label>
@@ -167,14 +236,27 @@ const TypePayment = () => {
                 ></textarea>
             </div>
 
+            <div className="total-price">
+                <h3>Total da Compra: R$ {totalPrice.toFixed(2)}</h3>
+            </div>
+
+            <div className="itens">
+                <h3>Itens:</h3>
+                <ul>
+                    {cartItens.map((item, index) => (
+                        <li key={index}>
+                            {item.nome} - R$ {item.preco.toFixed(2)} x {item.quantidade}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+
             <button className="submit-button" onClick={handleSubmit}>
                 Finalizar Pedido
             </button>
 
-            <button
-                className="back-button"
-                onClick={() => navigate("/menu")}
-            >
+            <button className="back-button" onClick={() => navigate("/menu")}>
                 Voltar ao Menu
             </button>
         </div>

@@ -41,7 +41,7 @@ sql.connect(config)
 
 // Rota de teste para verificar se o servidor está funcionando
 app.get('/', (req, res) => {
-  res.json('Servidor funcionando corretamente');
+  res.json("Servidor funcionando corretamente");
 });
 
 app.get('/register', (req, res) => {
