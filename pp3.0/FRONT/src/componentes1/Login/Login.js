@@ -48,16 +48,23 @@ const SignInPage = () => {
         // Corrige o nome para exibir com espaço entre o primeiro e o último nome
         const userWithFullName = {
           ...result.user,
-          fullName: `${result.user.firstName} ${result.user.lastName}`, // Concatenando nome completo
+          fullName: `${result.user.firstName} ‎ ${result.user.lastName}`, // Concatenando nome completo
         };
         
         // Salva o usuário com nome completo no localStorage
         localStorage.setItem('user', JSON.stringify(userWithFullName));
+        localStorage.setItem('admin', result.user.isAdmin); // Salva o papel do usuário no localStorage
 
         setTimeout(() => {
           setLoading(false);
           window.dispatchEvent(new Event('storage')); 
-          navigate('/'); 
+
+          // Redireciona para /HPP se o usuário for admin, senão para a página inicial
+          if (result.user.isAdmin === true) {
+            navigate('/HPP');
+          } else {
+            navigate('/');
+          }
         }, 500); 
 
       } else {
@@ -71,7 +78,7 @@ const SignInPage = () => {
       console.error(err);
     }
   };
-  
+
   return (
     <div className="tudo">
       <div className="signup-container">

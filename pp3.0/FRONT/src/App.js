@@ -9,6 +9,7 @@ import Menu from "./componentes1/Menu/menu";
 import Pagamento from "./componentes1/Pagamento/Pagamento";
 import TypePayment from "./componentes1/typePayment/typePayment";
 import NotaPagamento from "./componentes1/notaPagamento/notaPagamento";
+import HPP from "./componentes1/HPP/HPP.js";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route path="/Pagamento" element={<Pagamento />} />{" "}
             <Route path="/typePayment" element={<TypePayment />} />{" "}
             <Route path="/notaPagamento" element={<NotaPagamento />} />
+            <Route path="/HPP" element={<HPP />} />
           </Routes>
         </div>
       </div>
