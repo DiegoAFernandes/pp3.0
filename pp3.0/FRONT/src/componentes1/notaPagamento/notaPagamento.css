@@ -41,6 +41,7 @@
 .observations {
     max-width: 600px; /* Define a largura máxima */
     margin: 20px auto; /* Centraliza a seção com margem */
+    margin-bottom: 60px;
 }
 
 .observations p {
@@ -72,4 +73,35 @@
 .back-button:hover {
     background-color: #d32f2f;
     transform: scale(1.05);
+}
+.i12 {
+    list-style: none; /* Remove os marcadores padrão */
+    margin: 10px 0;
+    padding-left: 25px; /* Espaço para o marcador */
+    position: relative;
+    
+    
+}
+
+.i12::before {
+    content: counter(item) " -"; /* Define o marcador como uma letra seguida de ponto */
+    counter-increment: item; /* Incrementa automaticamente o contador */
+    color: #007BFF; /* Cor do marcador (azul, pode ajustar) */
+    font-weight: bold; /* Deixa o marcador mais destacado */
+    position: center;
+    margin-right: 25px;
+    margin-left: -60px;
+    
+    
+}
+
+ul {
+    counter-reset: item; /* Reseta o contador no início da lista */
+}
+
+.red{
+color: #da9337;
+}
+.bold{
+    font-weight: bold;
 }

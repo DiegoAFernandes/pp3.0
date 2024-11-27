@@ -244,8 +244,8 @@ const TypePayment = () => {
                 <h3>Itens:</h3>
                 <ul>
                     {cartItens.map((item, index) => (
-                        <li key={index}>
-                            {item.nome} - R$ {item.preco.toFixed(2)} x {item.quantidade}
+                        <li key={index} className="l12">
+                            {item.name} - R$ {item.price.toFixed(2)} x {item.quantity}
                         </li>
                     ))}
                 </ul>

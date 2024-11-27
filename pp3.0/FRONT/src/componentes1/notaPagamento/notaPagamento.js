@@ -4,7 +4,7 @@ import "./notaPagamento.css"
 
 const NotaPagamento = () => {
     const location = useLocation();
-    const { totalPrice, paymentDetails } = location.state || {};
+    const { totalPrice, paymentDetails, cartItens } = location.state || {};
     const navigate = useNavigate();
 
     return (
@@ -38,8 +38,24 @@ const NotaPagamento = () => {
                     <p><strong>Observações:</strong> {paymentDetails.observations || "Nenhuma observação."}</p>
                 </div>
 
+                <div className="items">
+                <h3>Itens do Pedido</h3>
+                {cartItens && cartItens.length > 0 ? (
+                    <ul>
+                    {cartItens.map((item, index) => (
+                            <li key={index} className='i12'>
+                                {item.name} - R$ {item.price.toFixed(2)} x {item.quantity}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>Nenhum item encontrado.</p>
+                )}
+                </div>
+
+
                 
-                <p><strong>Total: </strong>R$ {totalPrice ? totalPrice.toFixed(2) : "0.00"}</p>
+                <p className='bold'><strong className='red'>Total: </strong>R$ {totalPrice ? totalPrice.toFixed(2) : "0.00"}</p>
             </div>
 
             <button className="back-button" onClick={() => navigate('/menu')}>

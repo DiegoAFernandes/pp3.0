@@ -75,12 +75,13 @@ const Menu = () => {
             alert("Você precisa adicionar itens ao carrinho antes de prosseguir.");
             return;
         }
-        const cartItems = Object.keys(cart).map(itemName => ({
+        const cartItens = Object.keys(cart).map(itemName => ({
             name: itemName,
             quantity: cart[itemName],
             price: menuItems.find(item => item.name === itemName).price
         }));
-        navigate('/typePayment', { state: { totalPrice, cartItems} });
+        
+        navigate('/typePayment', { state: { totalPrice, cartItens} });
     };
     
     

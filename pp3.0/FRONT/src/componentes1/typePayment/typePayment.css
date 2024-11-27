@@ -298,6 +298,21 @@
 
 .itens{
     list-style-type: none;
+    background-color: #0f0f0f;
+    padding: 3px;
+    border-radius: 5px;
+    color: white;
+    width: 350px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.7);
+    margin-block-end: 5px;
+    
+}
+
+.l12{
+    list-style: "- ";
+    max-width: 90%;
+    align-self: center;
+    color: white;
 }
 
 
