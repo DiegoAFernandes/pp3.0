@@ -124,6 +124,111 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Rota para listar todos os usuários
+app.get('/users', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query('SELECT * FROM Users');
+    res.status(200).json(result.recordset); // Retorna os usuários como JSON
+  } catch (err) {
+    console.error('Erro ao listar usuários:', err.message || err);
+    res.status(500).json({ message: 'Erro ao listar usuários' });
+  }
+});
+
+// Rota para atualizar um usuário
+app.put('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  const { username, email, phone } = req.body;
+
+  if (!username || !email || !phone) {
+    return res.status(400).json({ message: 'Todos os campos são obrigatórios para atualização' });
+  }
+
+  try {
+    const pool = await sql.connect(config);
+    await pool.request()
+      .input('id', sql.Int, id)
+      .input('username', sql.VarChar, username)
+      .input('email', sql.VarChar, email)
+      .input('phone', sql.VarChar, phone)
+      .query('UPDATE Users SET username = @username, email = @email, phone = @phone WHERE id = @id');
+    res.status(200).json({ message: 'Usuário atualizado com sucesso' });
+  } catch (err) {
+    console.error('Erro ao atualizar usuário:', err.message || err);
+    res.status(500).json({ message: 'Erro ao atualizar usuário' });
+  }
+});
+
+// Rota para deletar um usuário
+app.delete('/users/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const pool = await sql.connect(config);
+    await pool.request()
+      .input('id', sql.Int, id)
+      .query('DELETE FROM Users WHERE id = @id');
+    res.status(200).json({ message: 'Usuário deletado com sucesso' });
+  } catch (err) {
+    console.error('Erro ao deletar usuário:', err.message || err);
+    res.status(500).json({ message: 'Erro ao deletar usuário' });
+  }
+});
+
+app.get('/items', async (req, res) => {
+  try {
+    const pool = await sql.connect(config);
+    const result = await pool.request().query('SELECT * FROM Estoque');
+    res.status(200).json(result.recordset); // Retorna os itens do estoque como JSON
+  } catch (err) {
+    console.error('Erro ao listar itens de estoque:', err.message || err);
+    res.status(500).json({ message: 'Erro ao listar itens de estoque' });
+  }
+});
+
+// Rota para atualizar um item do estoque
+app.put('/items/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, price, quantity } = req.body;
+
+  // Validação de campos obrigatórios
+  if (!name || !price || !quantity) {
+    return res.status(400).json({ message: 'Todos os campos são obrigatórios para atualização' });
+  }
+
+  try {
+    const pool = await sql.connect(config);
+    await pool.request()
+      .input('id', sql.Int, id)
+      .input('name', sql.VarChar, name)
+      .input('price', sql.Float, price)
+      .input('quantity', sql.Int, quantity)
+      .query('UPDATE Estoque SET name = @name, price = @price, quantity = @quantity WHERE id = @id');
+    res.status(200).json({ message: 'Item do estoque atualizado com sucesso' });
+  } catch (err) {
+    console.error('Erro ao atualizar item de estoque:', err.message || err);
+    res.status(500).json({ message: 'Erro ao atualizar item de estoque' });
+  }
+});
+
+// Rota para deletar um item do estoque
+app.delete('/items/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const pool = await sql.connect(config);
+    await pool.request()
+      .input('id', sql.Int, id)
+      .query('DELETE FROM Estoque WHERE id = @id');
+    res.status(200).json({ message: 'Item de estoque deletado com sucesso' });
+  } catch (err) {
+    console.error('Erro ao deletar item de estoque:', err.message || err);
+    res.status(500).json({ message: 'Erro ao deletar item de estoque' });
+  }
+});
+
+
 const port = 8000;
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);

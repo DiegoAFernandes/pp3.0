@@ -10,6 +10,8 @@ import Pagamento from "./componentes1/Pagamento/Pagamento";
 import TypePayment from "./componentes1/typePayment/typePayment";
 import NotaPagamento from "./componentes1/notaPagamento/notaPagamento";
 import HPP from "./componentes1/HPP/HPP.js";
+import UserList from "./componentes1/userList/userList.js";
+import StockList from "./componentes1/Estoque/Estoque.js";
 
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
             <Route path="/typePayment" element={<TypePayment />} />{" "}
             <Route path="/notaPagamento" element={<NotaPagamento />} />
             <Route path="/HPP" element={<HPP />} />
+            <Route path="/userList" element={<UserList />} />
+            <Route path="/stockList" element={<StockList />} />
           </Routes>
         </div>
       </div>

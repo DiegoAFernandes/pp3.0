@@ -67,8 +67,13 @@ const Menu = () => {
         setTotalPrice(total);
     };
     const navigate = useNavigate();
-    const handleHomePage = () => {        
-        navigate('/');
+    const handleHomePage = () => {
+        const isAdmin = localStorage.getItem('admin') === 'true'; // Verifica o papel do usuário no localStorage
+        if (isAdmin) {
+            navigate('/HPP');
+        } else {
+            navigate('/');
+        }
     };
     const handlePagamento = () => {
         if (totalPrice === 0) {
