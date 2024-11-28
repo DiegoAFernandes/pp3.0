@@ -135,23 +135,23 @@ const StockList = () => {
           </tr>
         </thead>
         <tbody>
-            {items.length > 0 ? (
-                items.map((item) => (
-                <tr key={item.id}>
-                    <td>{item.name}</td>
-                    <td>{item.price}</td>
-                    <td>{item.quantity}</td>
-                    <td>
-                    <button onClick={() => handleEdit(item)}>Editar</button>
-                    <button onClick={() => handleDelete(item.id)}>Deletar</button>
-                    </td>
-                </tr>
-                ))
-            ) : (
-                <tr>
-                <td colSpan="4">Nenhum item encontrado.</td>
-                </tr>
-            )}
+        {items.length > 0 ? (
+  items.map((item, index) => (
+    <tr key={index}>
+      <td>{item.name}</td>
+      <td>{item.price}</td>
+      <td>{item.quantity}</td>
+      <td>
+        <button onClick={() => handleEdit(item)}>Editar</button>
+        <button onClick={() => handleDelete(item.id)}>Deletar</button>
+      </td>
+    </tr>
+  ))
+) : (
+  <tr>
+    <td colSpan="4">Nenhum item encontrado.</td>
+  </tr>
+)}
         </tbody>
       </table>
 

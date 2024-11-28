@@ -187,6 +187,7 @@ app.get('/items', async (req, res) => {
   }
 });
 
+
 // Rota para atualizar um item do estoque
 app.put('/items/:id', async (req, res) => {
   const { id } = req.params;
