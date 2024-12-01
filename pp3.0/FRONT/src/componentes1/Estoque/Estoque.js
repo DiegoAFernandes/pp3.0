@@ -62,7 +62,7 @@ const StockList = () => {
     const { Nome, Preco, QuantidadeEstoque } = newItemData;
 
     if (!Nome || !Preco || !QuantidadeEstoque) {
-      setError("Preencha todos os campos!");
+      alert("Preencha todos os campos!");
       return;
     }
 
@@ -74,7 +74,7 @@ const StockList = () => {
       });
 
       if (response.ok) {
-        setSuccessMessage("Item atualizado com sucesso!");
+        alert("Item atualizado com sucesso!");
         fetchItems();
         setEditingItem(null);
         setNewItemData({ Nome: "", Preco: "", QuantidadeEstoque: "" });
@@ -129,7 +129,7 @@ const StockList = () => {
     <div className="stock-list">
       <h2>Estoque</h2>
       {error && <div className="error-message">{error}</div>}
-      {successMessage && <div className="success-message">{successMessage}</div>}
+      
       <table border="1" cellPadding="10">
         <thead>
           <tr>

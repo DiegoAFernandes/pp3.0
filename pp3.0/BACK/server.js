@@ -119,18 +119,23 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Rota para listar todos os usuários
 app.get('/users', async (req, res) => {
   try {
     const pool = await sql.connect(config);
     const result = await pool.request().query('SELECT * FROM Users');
-    console.log('Dados retornados:', result.recordset); // Verifica os dados
+    
+    console.log('Usuários retornados:', result.recordset);
+    if (result.recordset.length === 0) {
+      return res.status(404).json({ message: 'Nenhum usuário encontrado' });
+    }
     res.status(200).json(result.recordset);
   } catch (err) {
     console.error('Erro ao listar usuários:', err.message || err);
     res.status(500).json({ message: 'Erro ao listar usuários' });
   }
 });
+
+
 
 // Rota para atualizar um usuário
 app.put('/users/:id', async (req, res) => {
@@ -225,6 +230,53 @@ app.delete('/items/:id', async (req, res) => {
     res.status(500).json({ message: 'Erro ao deletar item de estoque' });
   }
 });
+
+app.post('/update-stock', async (req, res) => {
+  console.log('Requisição recebida para /update-stock');  // Adicionando log
+  const { cartItens } = req.body;
+  
+  if (!cartItens || !Array.isArray(cartItens) || cartItens.length === 0) {
+    return res.status(400).json({ message: 'Carrinho de compras vazio ou inválido' });
+  }
+
+  try {
+    const pool = await sql.connect(config);
+
+    const transaction = new sql.Transaction(pool);
+    await transaction.begin();
+
+    for (let item of cartItens) {
+      const { id, quantity } = item;
+
+      if (!id || !quantity || quantity <= 0) {
+        await transaction.rollback();
+        return res.status(400).json({ message: `Dados inválidos para o item com ID ${id}` });
+      }
+
+      await transaction.request()
+        .input('id', sql.Int, id)
+        .input('quantidade', sql.Int, quantity)
+        .query('UPDATE Estoque SET QuantidadeEstoque = QuantidadeEstoque - @quantidade WHERE Id = @id');
+    }
+
+    await transaction.commit();
+    res.status(200).json({ message: 'Estoque atualizado com sucesso' });
+  } catch (err) {
+    console.error('Erro ao atualizar o estoque:', err.message || err);
+    try {
+      await transaction.rollback();
+    } catch (rollbackError) {
+      console.error('Erro ao realizar rollback da transação:', rollbackError.message || rollbackError);
+    }
+    res.status(500).json({ message: 'Erro ao atualizar o estoque' });
+  }
+});
+
+
+
+
+
+
 
 const port = 8000;
 app.listen(port, () => {

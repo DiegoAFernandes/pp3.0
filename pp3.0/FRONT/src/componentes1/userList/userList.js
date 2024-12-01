@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "./listaNomes.css"; 
+import "./listaNomes.css";
 
 const UserList = () => {
-  const [users, setUsers] = useState([]); 
-  const [editingUser, setEditingUser] = useState(null); 
+  const [users, setUsers] = useState([]);
+  const [editingUser, setEditingUser] = useState(null);
   const [newUserData, setNewUserData] = useState({ username: '', email: '', phone: '' });
-  const [isAdmin, setIsAdmin] = useState(false); 
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true); // Estado de carregamento
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   // Função para buscar usuários
   const fetchUsers = async () => {
@@ -16,7 +16,7 @@ const UserList = () => {
       const response = await fetch('http://localhost:8000/users');
       if (response.ok) {
         const usersData = await response.json();
-        console.log('Usuarios:', usersData); // Verifique os dados retornados
+        console.log('Usuários:', usersData); // Verifique os dados retornados
         setUsers(usersData); // Atualizando o estado com os dados dos usuários
       } else {
         console.error('Erro ao listar usuários');
@@ -27,6 +27,7 @@ const UserList = () => {
       setLoading(false); // Define o loading como false após a requisição
     }
   };
+
 
   // Função para editar usuário
   const handleEdit = (user) => {
@@ -42,19 +43,19 @@ const UserList = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     const { username, email, phone } = newUserData;
-  
+
     if (!username || !email || !phone) {
       alert('Todos os campos são obrigatórios');
       return;
     }
-  
+
     try {
       const response = await fetch(`http://localhost:8000/users/${editingUser.UserID}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newUserData)
       });
-  
+
       if (response.ok) {
         alert('Usuário atualizado com sucesso!');
         fetchUsers(); // Atualiza a lista de usuários
@@ -75,7 +76,7 @@ const UserList = () => {
         const response = await fetch(`http://localhost:8000/users/${id}`, {
           method: 'DELETE'
         });
-  
+
         if (response.ok) {
           alert('Usuário deletado com sucesso!');
           fetchUsers(); // Atualiza a lista de usuários
@@ -99,22 +100,22 @@ const UserList = () => {
 
   // Verifica se o usuário tem permissão de admin
   const checkAdminStatus = () => {
-    const userRole = localStorage.getItem("admin"); 
+    const userRole = localStorage.getItem("admin");
     if (userRole !== "true") {
       alert("Acesso negado! Você não tem permissão para acessar esta página.");
-      navigate("/"); 
+      navigate("/");
     } else {
       setIsAdmin(true);
     }
   };
 
   useEffect(() => {
-    checkAdminStatus(); 
-    fetchUsers(); 
+    checkAdminStatus();
+    fetchUsers();
   }, [navigate]);
 
   const handleBack = () => {
-    navigate("/HPP"); 
+    navigate("/HPP");
   };
 
   // Se não for admin, não exibe a lista de usuários

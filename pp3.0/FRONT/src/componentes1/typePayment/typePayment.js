@@ -14,6 +14,9 @@ const TypePayment = () => {
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
+    const location = useLocation();
+    const totalPrice = location.state?.totalPrice || 0;
+    const cartItens = location.state?.cartItens || [];
 
     const handlePaymentSelection = (method) => {
         setPaymentMethod(method);
@@ -41,19 +44,7 @@ const TypePayment = () => {
         return true;
     };
 
-    const buttons = document.querySelectorAll('.payment-options button');
-
-        buttons.forEach(button => {
-        button.addEventListener('click', function () {
-        // Remove a classe .selected de todos os botões
-        buttons.forEach(btn => btn.classList.remove('selected'));
-
-        // Adiciona a classe .selected ao botão clicado
-        this.classList.add('selected');
-        });
-    });
-
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!paymentMethod) {
             alert("Selecione um método de pagamento.");
             return;
@@ -84,27 +75,34 @@ const TypePayment = () => {
                     : null,
         };
 
-        const totalPrice = location.state?.totalPrice || 0; 
-        const cartItens = location.state?.cartItens || [];
         console.log(cartItens);
 
-        // Armazenar os dados no sessionStorage
-        sessionStorage.setItem("paymentDetails", JSON.stringify(paymentDetails));
-        sessionStorage.setItem("totalPrice", totalPrice);
-        sessionStorage.setItem("cartItens", cartItens);
+        // Enviar os dados para o backend
+        try {
+            const response = await fetch("http://localhost:8000/update-stock", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    cartItens,  
+                    
+                }),
+            });
 
-        console.log("Detalhes do pagamento:", paymentDetails);
-        alert("Pedido finalizado com sucesso!");
+            if (!response.ok) {
+                throw new Error("Erro ao processar o pedido.");
+            }
 
-        navigate('/notaPagamento', { state: { totalPrice, paymentDetails, cartItens } });
+            alert("Pedido finalizado com sucesso!");
+            navigate('/notaPagamento', { state: { totalPrice, paymentDetails, cartItens } });
+        } catch (error) {
+            console.error("Erro ao finalizar o pedido:", error);
+            alert("Ocorreu um erro ao processar seu pedido. Tente novamente.");
+        }
     };
 
     const qrCodeExample = "https://via.placeholder.com/200";
-    const location = useLocation();
-    const totalPrice = location.state?.totalPrice || 0;
-    const cartItens = location.state?.cartItens || [];
-    
-
 
     return (
         <div className="payment-selection-container">
@@ -250,7 +248,6 @@ const TypePayment = () => {
                     ))}
                 </ul>
             </div>
-
 
             <button className="submit-button" onClick={handleSubmit}>
                 Finalizar Pedido
