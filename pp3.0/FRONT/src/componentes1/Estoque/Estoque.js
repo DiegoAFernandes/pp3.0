@@ -1,130 +1,135 @@
 import React, { useState, useEffect } from "react";
+import "./Estoque.css"; // Ajuste o nome do arquivo CSS, se necessário
 import { useNavigate } from "react-router-dom";
-import "../../componentes1//Estoque/Estoque.css"; // Você pode ajustar o CSS para a nova página
 
 const StockList = () => {
-  const [items, setItems] = useState([]); // Armazena a lista de itens
-  const [editingItem, setEditingItem] = useState(null); // Armazena o item que está sendo editado
-  const [newItemData, setNewItemData] = useState({ name: '', price: '', quantity: '' }); // Dados do item para atualização
-  const [isAdmin, setIsAdmin] = useState(false); // Estado para verificar se o usuário é admin
-  const navigate = useNavigate(); // Hook para navegação
+  const [items, setItems] = useState([]);
+  const [editingItem, setEditingItem] = useState(null);
+  const [newItemData, setNewItemData] = useState({
+    Nome: "",
+    Preco: "",
+    QuantidadeEstoque: "",
+  });
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate();
 
-  // Função para listar todos os itens de estoque
+  // Função para buscar itens do estoque
   const fetchItems = async () => {
     try {
-      const response = await fetch('http://localhost:8000/items');
+      const response = await fetch("http://localhost:8000/items");
       if (response.ok) {
         const itemsData = await response.json();
-        console.log('Itens:', itemsData); // Verifique os dados retornados
         setItems(itemsData);
       } else {
-        console.error('Erro ao listar itens de estoque');
+        setError("Erro ao buscar itens: " + response.statusText);
       }
     } catch (error) {
-      console.error('Erro na requisição:', error);
+      setError("Erro na requisição: " + error.message);
     }
   };
 
-  // Função para editar um item de estoque
+  // Função para verificar se o usuário é admin
+  const checkAdminStatus = () => {
+    const userRole = localStorage.getItem("admin");
+    if (userRole !== "true") {
+      alert("Acesso negado! Redirecionando...");
+      navigate("/");
+    } else {
+      setIsAdmin(true);
+    }
+  };
+
+  useEffect(() => {
+    checkAdminStatus();
+    fetchItems();
+  }, [navigate]);
+
+  // Função para edição
   const handleEdit = (item) => {
     setEditingItem(item);
     setNewItemData({
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity
+      Nome: item.Nome,
+      Preco: item.Preco,
+      QuantidadeEstoque: item.QuantidadeEstoque,
     });
   };
 
-  // Função para atualizar os dados de um item
+  // Função para atualizar item
   const handleUpdate = async (e) => {
     e.preventDefault();
-    const { name, price, quantity } = newItemData;
+    const { Nome, Preco, QuantidadeEstoque } = newItemData;
 
-    if (!name || !price || !quantity) {
-      alert('Todos os campos são obrigatórios');
+    if (!Nome || !Preco || !QuantidadeEstoque) {
+      setError("Preencha todos os campos!");
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:8000/items/${editingItem.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newItemData)
+      const response = await fetch(`http://localhost:8000/items/${editingItem.Id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newItemData),
       });
 
       if (response.ok) {
-        alert('Item atualizado com sucesso!');
-        fetchItems(); // Atualiza a lista de itens
-        setEditingItem(null); // Reseta o estado de edição
+        setSuccessMessage("Item atualizado com sucesso!");
+        fetchItems();
+        setEditingItem(null);
+        setNewItemData({ Nome: "", Preco: "", QuantidadeEstoque: "" });
       } else {
-        alert('Erro ao atualizar item');
+        setError("Erro ao atualizar item.");
       }
     } catch (error) {
-      console.error('Erro na requisição:', error);
+      setError("Erro ao realizar a operação.");
     }
   };
 
-  // Função para deletar um item de estoque
+  // Função para deletar item
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm('Tem certeza que deseja deletar este item?');
+    const confirmDelete = window.confirm("Tem certeza que deseja deletar este item?");
     if (confirmDelete) {
       try {
         const response = await fetch(`http://localhost:8000/items/${id}`, {
-          method: 'DELETE'
+          method: "DELETE",
         });
 
         if (response.ok) {
-          alert('Item deletado com sucesso!');
-          fetchItems(); // Atualiza a lista de itens
+          setSuccessMessage("Item deletado com sucesso!");
+          fetchItems();
         } else {
-          alert('Erro ao deletar item');
+          setError("Erro ao deletar item.");
         }
       } catch (error) {
-        console.error('Erro na requisição:', error);
+        setError("Erro na requisição.");
       }
     }
   };
 
-  // Função para manipular mudanças nos campos de edição
+  // Atualiza os dados de um item em edição
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewItemData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  // Função para verificar se o usuário é administrador
-  const checkAdminStatus = () => {
-    const userRole = localStorage.getItem("admin"); // Supondo que o papel do usuário esteja armazenado no localStorage
-    if (userRole !== "true") {
-      alert("Acesso negado! Você não tem permissão para acessar esta página.");
-      navigate("/"); // Redireciona para a página inicial
-    } else {
-      setIsAdmin(true); // Usuário é admin, continua na página
-    }
-  };
-
-  // Carregar a lista de itens e verificar o status do admin assim que o componente for montado
-  useEffect(() => {
-    checkAdminStatus(); // Verifica se o usuário é admin
-    fetchItems(); // Carrega os itens de estoque
-  }, [navigate]);
-
-  // Função para voltar para a página /HPP
+  // Botão para voltar
   const handleBack = () => {
-    navigate("/HPP"); // Redireciona para a página HPP
+    navigate("/HPP");
   };
 
-  // Se não for admin, renderiza nada ou um aviso
   if (!isAdmin) {
     return <div>Você não tem permissão para acessar esta página.</div>;
   }
 
   return (
-    <div>
-      
-      <h2>Lista de Itens de Estoque</h2>
+    <div className="stock-list">
+      <h2>Estoque</h2>
+      {error && <div className="error-message">{error}</div>}
+      {successMessage && <div className="success-message">{successMessage}</div>}
       <table border="1" cellPadding="10">
         <thead>
           <tr>
@@ -135,36 +140,36 @@ const StockList = () => {
           </tr>
         </thead>
         <tbody>
-        {items.length > 0 ? (
-  items.map((item, index) => (
-    <tr key={index}>
-      <td>{item.name}</td>
-      <td>{item.price}</td>
-      <td>{item.quantity}</td>
-      <td>
-        <button onClick={() => handleEdit(item)}>Editar</button>
-        <button onClick={() => handleDelete(item.id)}>Deletar</button>
-      </td>
-    </tr>
-  ))
-) : (
-  <tr>
-    <td colSpan="4">Nenhum item encontrado.</td>
-  </tr>
-)}
+          {items.length > 0 ? (
+            items.map((item) => (
+              <tr key={item.Id}>
+                <td>{item.Nome}</td>
+                <td>R$ {item.Preco.toFixed(2)}</td>
+                <td>{item.QuantidadeEstoque}</td>
+                <td>
+                  <button onClick={() => handleEdit(item)}>Editar</button>
+                  <button onClick={() => handleDelete(item.Id)}>Deletar</button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4">Nenhum item encontrado.</td>
+            </tr>
+          )}
         </tbody>
       </table>
 
       {editingItem && (
-        <div>
+        <div className="edit-item">
           <h3>Editar Item</h3>
           <form onSubmit={handleUpdate}>
             <div>
               <label>Nome:</label>
               <input
                 type="text"
-                name="name"
-                value={newItemData.name}
+                name="Nome"
+                value={newItemData.Nome}
                 onChange={handleChange}
               />
             </div>
@@ -172,8 +177,9 @@ const StockList = () => {
               <label>Preço:</label>
               <input
                 type="number"
-                name="price"
-                value={newItemData.price}
+                step="0.01"
+                name="Preco"
+                value={newItemData.Preco}
                 onChange={handleChange}
               />
             </div>
@@ -181,8 +187,8 @@ const StockList = () => {
               <label>Quantidade:</label>
               <input
                 type="number"
-                name="quantity"
-                value={newItemData.quantity}
+                name="QuantidadeEstoque"
+                value={newItemData.QuantidadeEstoque}
                 onChange={handleChange}
               />
             </div>
@@ -190,7 +196,8 @@ const StockList = () => {
           </form>
         </div>
       )}
-      <button onClick={handleBack}>Voltar</button> {/* Botão de Voltar */}
+
+      <button onClick={handleBack}>Voltar</button>
     </div>
   );
 };

@@ -3,22 +3,22 @@ const express = require('express');
 const sql = require('mssql');
 const cors = require('cors');
 
-// Criando o servidor Express
 const app = express();
 
-// Habilitando CORS
-app.use(
-  cors({
-    origin: 'http://localhost:3000', // URL do seu frontend
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
-  })
-);
+// Configuração do CORS para permitir acesso do frontend
+app.use(cors({
+  origin: 'http://localhost:3000',  // Permite acesso do frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Permite os métodos GET, POST, PUT, DELETE
+  allowedHeaders: ['Content-Type', 'Authorization'],  // Cabeçalhos permitidos
+  preflightContinue: false,  // Se false, o Express gerencia a resposta ao preflight
+  optionsSuccessStatus: 200  // Para evitar problemas com navegadores antigos
+}));
 
-// Parse de JSON no corpo da requisição
+// Middleware para todas as requisições de "OPTIONS" (preflight)
+app.options('*', cors());  // Responde às requisições OPTIONS com os cabeçalhos de CORS
+
 app.use(express.json());
 
-// Configuração do banco de dados
 const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -28,18 +28,16 @@ const config = {
     encrypt: true,
     trustServerCertificate: true,
   },
-  instanceName: 'SQLEXPRESS'
+  instanceName: 'SQLEXPRESS',
 };
 
-// Conexão com o banco de dados
 sql.connect(config)
   .then(() => console.log('Conectado ao banco de dados'))
   .catch((err) => {
     console.error('Erro de conexão com o banco de dados:', err.message || err);
-    process.exit(1); // Se a conexão falhar, o servidor é encerrado
+    process.exit(1);
   });
 
-// Rota de teste para verificar se o servidor está funcionando
 app.get('/', (req, res) => {
   res.json("Servidor funcionando corretamente");
 });
@@ -48,9 +46,6 @@ app.get('/register', (req, res) => {
   res.send('A rota /register está funcionando');
 });
 
-
-
-// Rota de registro de usuário
 app.post('/register', async (req, res) => {
   console.log("A rota /register foi chamada!");
 
@@ -66,13 +61,13 @@ app.post('/register', async (req, res) => {
   try {
     // Concatenar firstName e lastName para o username
     const username = firstName + lastName;
-    console.log('Username gerado:', username); // Adicionando log para verificar o valor de username
+    console.log('Username gerado:', username);
 
     const pool = await sql.connect(config);
     const result = await pool.request()
       .input('username', sql.VarChar, username)
       .input('email', sql.VarChar, email)
-      .input('password', sql.VarChar, password)  // Sem hash da senha
+      .input('password', sql.VarChar, password)
       .input('phone', sql.VarChar, phone)
       .query('USE dbSMP \n INSERT INTO Users (username, email, password, phone) VALUES (@username, @email, @password, @phone)');
 
@@ -129,7 +124,8 @@ app.get('/users', async (req, res) => {
   try {
     const pool = await sql.connect(config);
     const result = await pool.request().query('SELECT * FROM Users');
-    res.status(200).json(result.recordset); // Retorna os usuários como JSON
+    console.log('Dados retornados:', result.recordset); // Verifica os dados
+    res.status(200).json(result.recordset);
   } catch (err) {
     console.error('Erro ao listar usuários:', err.message || err);
     res.status(500).json({ message: 'Erro ao listar usuários' });
@@ -152,7 +148,7 @@ app.put('/users/:id', async (req, res) => {
       .input('username', sql.VarChar, username)
       .input('email', sql.VarChar, email)
       .input('phone', sql.VarChar, phone)
-      .query('UPDATE Users SET username = @username, email = @email, phone = @phone WHERE id = @id');
+      .query('UPDATE Users SET Username = @username, Email = @email, Phone = @phone WHERE UserID = @id');
     res.status(200).json({ message: 'Usuário atualizado com sucesso' });
   } catch (err) {
     console.error('Erro ao atualizar usuário:', err.message || err);
@@ -176,6 +172,7 @@ app.delete('/users/:id', async (req, res) => {
   }
 });
 
+// Rota para listar todos os itens de estoque
 app.get('/items', async (req, res) => {
   try {
     const pool = await sql.connect(config);
@@ -187,14 +184,13 @@ app.get('/items', async (req, res) => {
   }
 });
 
-
 // Rota para atualizar um item do estoque
 app.put('/items/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, price, quantity } = req.body;
+  const { Nome, Preco, QuantidadeEstoque } = req.body;
 
   // Validação de campos obrigatórios
-  if (!name || !price || !quantity) {
+  if (!Nome || !Preco || !QuantidadeEstoque) {
     return res.status(400).json({ message: 'Todos os campos são obrigatórios para atualização' });
   }
 
@@ -202,16 +198,17 @@ app.put('/items/:id', async (req, res) => {
     const pool = await sql.connect(config);
     await pool.request()
       .input('id', sql.Int, id)
-      .input('name', sql.VarChar, name)
-      .input('price', sql.Float, price)
-      .input('quantity', sql.Int, quantity)
-      .query('UPDATE Estoque SET name = @name, price = @price, quantity = @quantity WHERE id = @id');
+      .input('Nome', sql.VarChar, Nome)
+      .input('Preco', sql.Float, Preco)
+      .input('QuantidadeEstoque', sql.Int, QuantidadeEstoque)
+      .query('UPDATE Estoque SET Nome = @Nome, Preco = @Preco, QuantidadeEstoque = @QuantidadeEstoque WHERE Id = @id');
     res.status(200).json({ message: 'Item do estoque atualizado com sucesso' });
   } catch (err) {
     console.error('Erro ao atualizar item de estoque:', err.message || err);
     res.status(500).json({ message: 'Erro ao atualizar item de estoque' });
   }
 });
+
 
 // Rota para deletar um item do estoque
 app.delete('/items/:id', async (req, res) => {
@@ -221,14 +218,13 @@ app.delete('/items/:id', async (req, res) => {
     const pool = await sql.connect(config);
     await pool.request()
       .input('id', sql.Int, id)
-      .query('DELETE FROM Estoque WHERE id = @id');
+      .query('DELETE FROM Estoque WHERE Id = @id');
     res.status(200).json({ message: 'Item de estoque deletado com sucesso' });
   } catch (err) {
     console.error('Erro ao deletar item de estoque:', err.message || err);
     res.status(500).json({ message: 'Erro ao deletar item de estoque' });
   }
 });
-
 
 const port = 8000;
 app.listen(port, () => {
