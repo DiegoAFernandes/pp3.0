@@ -161,21 +161,29 @@ app.put('/users/:id', async (req, res) => {
   }
 });
 
-// Rota para deletar um usuário
 app.delete('/users/:id', async (req, res) => {
   const { id } = req.params;
+  
+  console.log('ID recebido para deletar:', id); // Adicione o log para ver o valor de "id"
+
+  if (isNaN(id)) {
+    return res.status(400).json({ message: 'ID inválido' });
+  }
 
   try {
     const pool = await sql.connect(config);
+    console.log('Conectado ao banco de dados');
     await pool.request()
       .input('id', sql.Int, id)
-      .query('DELETE FROM Users WHERE id = @id');
+      .query('DELETE FROM Users WHERE UserID = @id');
     res.status(200).json({ message: 'Usuário deletado com sucesso' });
   } catch (err) {
     console.error('Erro ao deletar usuário:', err.message || err);
     res.status(500).json({ message: 'Erro ao deletar usuário' });
   }
 });
+
+
 
 // Rota para listar todos os itens de estoque
 app.get('/items', async (req, res) => {
@@ -232,45 +240,50 @@ app.delete('/items/:id', async (req, res) => {
 });
 
 app.post('/update-stock', async (req, res) => {
-  console.log('Requisição recebida para /update-stock');  // Adicionando log
-  const { cartItens } = req.body;
-  
-  if (!cartItens || !Array.isArray(cartItens) || cartItens.length === 0) {
-    return res.status(400).json({ message: 'Carrinho de compras vazio ou inválido' });
+  const { itemsToUpdate } = req.body;
+
+  if (!itemsToUpdate || itemsToUpdate.length === 0) {
+      return res.status(400).json({ message: 'Nenhum item recebido para atualização de estoque.' });
   }
 
   try {
-    const pool = await sql.connect(config);
+      const pool = await sql.connect(config);
 
-    const transaction = new sql.Transaction(pool);
-    await transaction.begin();
+      // Atualiza o estoque de cada item com base na quantidade comprada
+      for (let item of itemsToUpdate) {
+          const { id, quantity } = item;
 
-    for (let item of cartItens) {
-      const { id, quantity } = item;
+          // Verifica a quantidade atual em estoque
+          const result = await pool.request()
+              .input('id', sql.Int, id)
+              .query('SELECT QuantidadeEstoque FROM Estoque WHERE Id = @id');
 
-      if (!id || !quantity || quantity <= 0) {
-        await transaction.rollback();
-        return res.status(400).json({ message: `Dados inválidos para o item com ID ${id}` });
+          if (result.recordset.length > 0) {
+              const currentStock = result.recordset[0].QuantidadeEstoque;
+              const newQuantity = currentStock - quantity;
+
+              if (newQuantity < 0) {
+                  return res.status(400).json({ message: `Estoque insuficiente para o item ID ${id}.` });
+              }
+
+              // Atualiza a quantidade do item no estoque
+              await pool.request()
+                  .input('id', sql.Int, id)
+                  .input('newQuantity', sql.Int, newQuantity)
+                  .query('UPDATE Estoque SET QuantidadeEstoque = @newQuantity WHERE Id = @id');
+          } else {
+              return res.status(404).json({ message: `Item ID ${id} não encontrado no estoque.` });
+          }
       }
 
-      await transaction.request()
-        .input('id', sql.Int, id)
-        .input('quantidade', sql.Int, quantity)
-        .query('UPDATE Estoque SET QuantidadeEstoque = QuantidadeEstoque - @quantidade WHERE Id = @id');
-    }
-
-    await transaction.commit();
-    res.status(200).json({ message: 'Estoque atualizado com sucesso' });
+      res.status(200).json({ message: 'Estoque atualizado com sucesso.' });
   } catch (err) {
-    console.error('Erro ao atualizar o estoque:', err.message || err);
-    try {
-      await transaction.rollback();
-    } catch (rollbackError) {
-      console.error('Erro ao realizar rollback da transação:', rollbackError.message || rollbackError);
-    }
-    res.status(500).json({ message: 'Erro ao atualizar o estoque' });
+      console.error('Erro ao atualizar estoque:', err.message || err);
+      res.status(500).json({ message: 'Erro ao atualizar estoque.' });
   }
 });
+
+
 
 
 

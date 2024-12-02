@@ -28,14 +28,13 @@ const UserList = () => {
     }
   };
 
-
   // Função para editar usuário
   const handleEdit = (user) => {
     setEditingUser(user);
     setNewUserData({
-      username: user.username,
-      email: user.email,
-      phone: user.phone
+      username: user.Username,
+      email: user.Email,
+      phone: user.Phone
     });
   };
 
@@ -129,9 +128,9 @@ const UserList = () => {
   }
 
   return (
-    <div>
+    <div className="user-list-container">
       <h2>Lista de Usuários</h2>
-      <table border="1" cellPadding="10">
+      <table className="user-table" border="1" cellPadding="10">
         <thead>
           <tr>
             <th>Username</th>
@@ -144,14 +143,15 @@ const UserList = () => {
           {users.length > 0 ? (
             users.map((user) => (
               <tr key={user.UserID}>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td>
+                <td>{user.Username}</td>
+                <td>{user.Email}</td>
+                <td>{user.Phone}</td>
+                <td className="action-buttons">
                   <button onClick={() => handleEdit(user)}>Editar</button>
                   <button onClick={() => handleDelete(user.UserID)}>Deletar</button>
                 </td>
               </tr>
+
             ))
           ) : (
             <tr>
@@ -162,7 +162,7 @@ const UserList = () => {
       </table>
 
       {editingUser && (
-        <div>
+        <div className="edit-form">
           <h3>Editar Usuário</h3>
           <form onSubmit={handleUpdate}>
             <div>
@@ -196,7 +196,7 @@ const UserList = () => {
           </form>
         </div>
       )}
-      <button onClick={handleBack}>Voltar</button>
+      <button className="cancel-button" onClick={handleBack}>Voltar</button>
     </div>
   );
 };

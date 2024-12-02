@@ -45,25 +45,8 @@ const TypePayment = () => {
     };
 
     const handleSubmit = async () => {
-        if (!paymentMethod) {
-            alert("Selecione um método de pagamento.");
-            return;
-        }
-
-        if (paymentMethod === "Cartão" && !validateCardDetails()) {
-            return;
-        }
-
-        if (!deliveryOption) {
-            alert("Selecione uma opção de entrega ou retirada.");
-            return;
-        }
-
-        if (deliveryOption === "Entregar" && !address) {
-            alert("Por favor, insira o endereço para entrega.");
-            return;
-        }
-
+        // Validação dos dados do pagamento e entrega
+    
         const paymentDetails = {
             method: paymentMethod,
             deliveryOption,
@@ -74,10 +57,13 @@ const TypePayment = () => {
                     ? { cardNumber, cardName, expiryDate, cvv }
                     : null,
         };
-
-        console.log(cartItens);
-
-        // Enviar os dados para o backend
+    
+        // Cria um objeto com os itens e a quantidade que deve ser atualizada no estoque
+        const itemsToUpdate = cartItens.map(item => ({
+            id: item.id,  // Garantir que o id do item esteja presente
+            quantity: item.quantity,
+        }));
+    
         try {
             const response = await fetch("http://localhost:8000/update-stock", {
                 method: "POST",
@@ -85,15 +71,14 @@ const TypePayment = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    cartItens,  
-                    
+                    itemsToUpdate,  // Envia a lista de itens com a quantidade a ser atualizada
                 }),
             });
-
+    
             if (!response.ok) {
                 throw new Error("Erro ao processar o pedido.");
             }
-
+    
             alert("Pedido finalizado com sucesso!");
             navigate('/notaPagamento', { state: { totalPrice, paymentDetails, cartItens } });
         } catch (error) {
@@ -101,6 +86,8 @@ const TypePayment = () => {
             alert("Ocorreu um erro ao processar seu pedido. Tente novamente.");
         }
     };
+    
+    
 
     const qrCodeExample = "https://via.placeholder.com/200";
 
