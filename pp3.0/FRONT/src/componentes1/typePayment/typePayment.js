@@ -44,8 +44,11 @@ const TypePayment = () => {
         return true;
     };
 
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         // Validação dos dados do pagamento e entrega
+        if (paymentMethod === "Cartão" && !validateCardDetails()) {
+            return; // Se os dados do cartão forem inválidos, não prossegue
+        }
     
         const paymentDetails = {
             method: paymentMethod,
@@ -58,36 +61,10 @@ const TypePayment = () => {
                     : null,
         };
     
-        // Cria um objeto com os itens e a quantidade que deve ser atualizada no estoque
-        const itemsToUpdate = cartItens.map(item => ({
-            id: item.id,  // Garantir que o id do item esteja presente
-            quantity: item.quantity,
-        }));
-    
-        try {
-            const response = await fetch("http://localhost:8000/update-stock", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    itemsToUpdate,  // Envia a lista de itens com a quantidade a ser atualizada
-                }),
-            });
-    
-            if (!response.ok) {
-                throw new Error("Erro ao processar o pedido.");
-            }
-    
-            alert("Pedido finalizado com sucesso!");
-            navigate('/notaPagamento', { state: { totalPrice, paymentDetails, cartItens } });
-        } catch (error) {
-            console.error("Erro ao finalizar o pedido:", error);
-            alert("Ocorreu um erro ao processar seu pedido. Tente novamente.");
-        }
+        // Simula a navegação para a página de nota de pagamento
+        alert("Pedido finalizado com sucesso!");
+        navigate('/notaPagamento', { state: { totalPrice, paymentDetails, cartItens } });
     };
-    
-    
 
     const qrCodeExample = "https://via.placeholder.com/200";
 

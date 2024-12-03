@@ -240,55 +240,50 @@ app.delete('/items/:id', async (req, res) => {
 });
 
 app.post('/update-stock', async (req, res) => {
-  const { itemsToUpdate } = req.body;
+  console.log('Corpo da requisição:', req.body); 
+  const { itemsToUpdate } = req.body; // Desestruturando para garantir que estamos recebendo isso corretamente.
 
-  if (!itemsToUpdate || itemsToUpdate.length === 0) {
-      return res.status(400).json({ message: 'Nenhum item recebido para atualização de estoque.' });
+  // Verificação básica: se itemsToUpdate não foi enviado ou está vazio
+  if (!Array.isArray(itemsToUpdate) || itemsToUpdate.length === 0) {
+    return res.status(400).json({ message: 'Nenhum item recebido para atualização de estoque.' });
   }
 
   try {
-      const pool = await sql.connect(config);
+    const pool = await sql.connect(config);
 
-      // Atualiza o estoque de cada item com base na quantidade comprada
-      for (let item of itemsToUpdate) {
-          const { id, quantity } = item;
+    // Processando cada item na lista de itens a serem atualizados
+    for (let item of itemsToUpdate) {
+      const { id, quantity } = item; 
 
-          // Verifica a quantidade atual em estoque
-          const result = await pool.request()
-              .input('id', sql.Int, id)
-              .query('SELECT QuantidadeEstoque FROM Estoque WHERE Id = @id');
-
-          if (result.recordset.length > 0) {
-              const currentStock = result.recordset[0].QuantidadeEstoque;
-              const newQuantity = currentStock - quantity;
-
-              if (newQuantity < 0) {
-                  return res.status(400).json({ message: `Estoque insuficiente para o item ID ${id}.` });
-              }
-
-              // Atualiza a quantidade do item no estoque
-              await pool.request()
-                  .input('id', sql.Int, id)
-                  .input('newQuantity', sql.Int, newQuantity)
-                  .query('UPDATE Estoque SET QuantidadeEstoque = @newQuantity WHERE Id = @id');
-          } else {
-              return res.status(404).json({ message: `Item ID ${id} não encontrado no estoque.` });
-          }
+      // Verificação adicional para garantir que cada item tenha id e quantity
+      if (!id || quantity === undefined) {
+        return res.status(400).json({ message: 'Cada item deve conter um ID e uma quantidade.' });
       }
 
-      res.status(200).json({ message: 'Estoque atualizado com sucesso.' });
+      // Atualiza o estoque diretamente no banco de dados
+      const result = await pool.request()
+        .input('id', sql.Int, id)
+        .input('quantity', sql.Int, quantity)
+        .query(` 
+          USE dbSMP;
+          UPDATE Estoque
+          SET QuantidadeEstoque = QuantidadeEstoque - @quantity
+          OUTPUT deleted.QuantidadeEstoque AS EstoqueAtual
+          WHERE Id = @id AND QuantidadeEstoque >= @quantity
+        `);
+
+      // Verifica se a atualização foi bem-sucedida ou se o item não foi encontrado
+      if (result.recordset.length === 0) {
+        return res.status(400).json({ message: `Estoque insuficiente ou item ID ${id} não encontrado.` });
+      }
+    }
+
+    res.status(200).json({ message: 'Estoque atualizado com sucesso.' });
   } catch (err) {
-      console.error('Erro ao atualizar estoque:', err.message || err);
-      res.status(500).json({ message: 'Erro ao atualizar estoque.' });
+    console.error('Erro ao atualizar estoque:', err.message || err);
+    res.status(500).json({ message: 'Erro ao atualizar estoque.' });
   }
 });
-
-
-
-
-
-
-
 
 
 const port = 8000;
